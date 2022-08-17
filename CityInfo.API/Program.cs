@@ -1,6 +1,8 @@
 using CityInfo.API;
+using CityInfo.API.DbContexts;
 using CityInfo.API.Services;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 Log.Logger=new LoggerConfiguration()
@@ -29,6 +31,13 @@ builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
 
 builder.Services.AddTransient<IMailService,LocalMailService>();
 builder.Services.AddSingleton<CitiesDataStore>();
+
+// IF You want to use SQL Server Database without SQLite By You must install Nuget Package for SQL Server (Microsoft.EntityFrameworkCore.Sqlserver)
+//builder.Services.AddDbContext<CityInfoContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("CityInfoConnectionString")));
+
+
+builder.Services.AddDbContext<CityInfoContext>(
+    dbContextOptions=>dbContextOptions.UseSqlite(builder.Configuration.GetConnectionString("ConnectionStrings:CityInfoDBConnectionString")));
 
 var app = builder.Build();
 
